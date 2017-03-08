@@ -12,10 +12,13 @@ buildscript {
         classpath "de.monkeyworks.buildmonkey:gradle.dependency:+"
         classpath "de.monkeyworks.buildmonkey:gradle.projectsetup:+"
         classpath "de.monkeyworks.buildmonkey:gradle.p2publish:+"
-        classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3"
+        classpath files("../../materialisation/product/build/libs/product-0.4.1.jar")
+
+        classpath "de.monkeyworks.buildmonkey:embedded.equinox:+"
+        classpath "de.monkeyworks.buildmonkey:bridge.api:+"
     }
 }
-apply plugin: "com.dorongold.task-tree"
+
 
 apply plugin: 'de.monkeyworks.buildmonkey.p2.P2MirrorPlugin'
 apply plugin: 'de.monkeyworks.buildmonkey.mavenizer.MavenizerPlugin'
@@ -141,9 +144,9 @@ subprojects {
     }
     // add install task to basic build step
     build.dependsOn install
-    assemble.dependsOn createTargetPlatform
+    build.dependsOn createTargetPlatform
+    build.dependsOn mavenizeP2Repository
     assemble.dependsOn mavenizeP2Repository
-    assemble.dependsOn mirrorP2Repository
     createTargetPlatform.dependsOn mirrorP2Repository
     mavenizeP2Repository.dependsOn mirrorP2Repository
 }
@@ -151,10 +154,20 @@ subprojects {
 apply plugin: 'de.monkeyworks.buildmonkey.p2.P2DeployerPlugin'
 
 p2Deployment {
-    eclipseHome = file("/home/micha/bin/neon")
     targetRepository = file("$buildDir/p2-repository")
     featureId = "ExampleE4App"
     featureLabel = "Example Feature"
     version = "1.0.0"
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+apply plugin: 'de.monkeyworks.buildmonkey.ProductPublishPlugin'
+
+product {
+    productFile = "MonkeyExampleE4Application/MonkeyExcampleE4Application.product"
+}
