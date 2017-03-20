@@ -51,13 +51,15 @@ public class P2DeployerPlugin implements Plugin<Project> {
 
             def jarTasks = doCopyArtifacts(config)
 
-            // create feature
-            def featureJar = config.targetRepository.toPath().resolve("features/${config.featureId}_${config.version}.jar")
-            FeatureHelper.createJar(config.featureId, 
-                config.featureLabel, 
-                config.version, "provider", 
-                jarTasks, 
-                featureJar.toFile())
+            if(config.generateFeature) {
+                // create feature
+                def featureJar = config.targetRepository.toPath().resolve("features/${config.featureId}_${config.version}.jar")
+                FeatureHelper.createJar(config.featureId,
+                        config.featureLabel,
+                        config.version, "provider",
+                        jarTasks,
+                        featureJar.toFile())
+            }
 
             
             doBuildP2Repository(config)

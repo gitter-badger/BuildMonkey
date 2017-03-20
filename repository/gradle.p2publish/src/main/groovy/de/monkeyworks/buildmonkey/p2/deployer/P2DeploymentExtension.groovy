@@ -29,6 +29,8 @@ class P2DeploymentExtension {
     // project
     final Project project
 
+    boolean generateFeature
+
     // default constructor
     P2DeploymentExtension(Project project) {
         this.project = project
